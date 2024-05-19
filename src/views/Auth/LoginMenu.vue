@@ -50,7 +50,7 @@
               // Haz lo que necesites con el usuario
               console.log(user);
               // Por ejemplo, redirige a la página de inicio
-              this.$router.push('/home');
+              this.$router.push('/Dashboard');
             })
             .catch(err => {
               // Error durante el inicio de sesión
