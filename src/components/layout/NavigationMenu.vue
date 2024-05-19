@@ -23,7 +23,6 @@
         Home
       </router-link>
 
-      
     </div>
 
     <div class="navbar-end">
