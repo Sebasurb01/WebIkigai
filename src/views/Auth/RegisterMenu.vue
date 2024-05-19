@@ -1,6 +1,6 @@
 <template>
 
-<div class="container">
+<div class="container mt-50">
 <div class ="columns">
 <div class="column is-6 is-offset-3">
     <h3 class="title is-3">Crear una cuenta</h3><hr>
@@ -30,7 +30,7 @@
 <button type="submit" class="button is-primary">Registrarme</button>
 
 </form>
-<div class="notification is-danger" v-if="error">
+<div class="notification is-danger mt-10 " v-if="error">
  {{ error }}
 </div>
 
