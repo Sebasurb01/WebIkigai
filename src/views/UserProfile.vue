@@ -1,10 +1,28 @@
 <template>
   <div class="container mt-50">
-    <div v-if="user && userData" class="columns is-centered">
+    <div v-if="user" class="columns is-centered">
       <div class="column is-6">
         <h3 class="title is-3">Perfil de Usuario</h3>
         <hr>
-        <form @submit.prevent="updateProfile">
+        
+        <!-- Admin User Selection -->
+        <div v-if="isAdmin">
+          <div class="field">
+            <label class="label">Seleccionar Usuario</label>
+            <div class="control">
+              <div class="select">
+                <select v-model="selectedUserId" @change="loadSelectedUser">
+                  <option value="">Seleccione un usuario</option>
+                  <option v-for="user in users" :key="user.id" :value="user.id">
+                    {{ user.data.firstName }} {{ user.data.lastName }} ({{ user.data.email }})
+                  </option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <form @submit.prevent="updateProfile" v-if="userData">
           <div class="field">
             <label class="label">Nombre</label>
             <div class="control">
@@ -65,7 +83,7 @@
             </div>
           </div>
 
-          <div class="field" v-if="isAdmin">
+          <div class="field">
             <label class="label">Rol</label>
             <div class="control">
               <div class="select">
@@ -102,7 +120,7 @@
 import { getAuth, onAuthStateChanged, updateProfile } from "firebase/auth";
 import { ref, getDownloadURL, uploadBytesResumable } from "firebase/storage";
 import { db, storage } from '@/firebase/init';
-import { doc, getDoc, updateDoc } from "firebase/firestore";
+import { doc, getDoc, updateDoc, collection, getDocs } from "firebase/firestore";
 
 export default {
   data() {
@@ -111,7 +129,9 @@ export default {
       userData: null,
       isAdmin: false,
       photo: null,
-      error: ''
+      error: '',
+      users: [],
+      selectedUserId: ''
     };
   },
   name: 'UserProfile',
@@ -119,25 +139,33 @@ export default {
     onFileChange(e) {
       this.photo = e.target.files[0];
     },
-    async fetchUserData(user) {
-      const docRef = doc(db, "clientes", user.uid);
+    async fetchUserData(userId) {
+      const docRef = doc(db, "clientes", userId);
       const docSnap = await getDoc(docRef);
       if (docSnap.exists()) {
         this.userData = docSnap.data();
-        this.isAdmin = this.userData.role === 'admin';
       } else {
         this.error = 'No se encontraron datos del usuario.';
+      }
+    },
+    async fetchAllUsers() {
+      const querySnapshot = await getDocs(collection(db, "clientes"));
+      this.users = querySnapshot.docs.map(doc => ({ id: doc.id, data: doc.data() }));
+    },
+    async loadSelectedUser() {
+      if (this.selectedUserId) {
+        await this.fetchUserData(this.selectedUserId);
       }
     },
     async updateProfile() {
       if (!this.userData) return;
 
-      const userRef = doc(db, "clientes", this.user.uid);
+      const userRef = doc(db, "clientes", this.selectedUserId || this.user.uid);
       try {
         await updateDoc(userRef, this.userData);
 
         if (this.photo) {
-          const storageRef = ref(storage, `photos/${this.user.uid}/${this.photo.name}`);
+          const storageRef = ref(storage, `photos/${this.selectedUserId || this.user.uid}/${this.photo.name}`);
           const uploadTask = uploadBytesResumable(storageRef, this.photo);
           await uploadTask;
           const photoURL = await getDownloadURL(uploadTask.snapshot.ref);
@@ -153,7 +181,14 @@ export default {
     onAuthStateChanged(auth, async (user) => {
       if (user) {
         this.user = user;
-        await this.fetchUserData(user);
+        const userRef = doc(db, "clientes", user.uid);
+        const userSnap = await getDoc(userRef);
+        if (userSnap.exists() && userSnap.data().role === 'admin') {
+          this.isAdmin = true;
+          await this.fetchAllUsers();
+        } else {
+          await this.fetchUserData(user.uid);
+        }
       } else {
         this.$router.push({ name: 'login' });
       }
