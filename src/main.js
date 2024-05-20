@@ -5,7 +5,7 @@ import { auth } from '@/firebase/init'; // Importa tu inicialización de Firebas
 
 let app = null;
 
-// Asegúrate de que la instancia de Firebase Auth está lista antes de montar la aplicación
+// 
 auth.onAuthStateChanged(() => {
   if (!app) {
     app = createApp(App);

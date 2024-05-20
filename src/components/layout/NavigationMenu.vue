@@ -26,7 +26,7 @@
           <template v-if="user">
             <div class="navbar-item has-dropdown is-hoverable">
               <a class="navbar-link">
-                {{ user.displayName }}
+                {{ user.displayName || user.email }}
               </a>
               <div class="navbar-dropdown">
                 <router-link class="navbar-item" to="/dashboard">
