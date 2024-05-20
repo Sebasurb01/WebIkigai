@@ -23,24 +23,21 @@
 
       <div class="navbar-end">
         <div class="navbar-item">
-
-
           <template v-if="user">
             <div class="navbar-item has-dropdown is-hoverable">
               <a class="navbar-link">
-                USUARIO
+                {{ user.displayName }}
               </a>
               <div class="navbar-dropdown">
-                <a class="navbar-item">
-                  Informacion 
-                </a>
+                <router-link class="navbar-item" to="/dashboard">
+                  Información
+                </router-link>
                 <a class="navbar-item" @click="logout">
                   Cerrar Sesión
                 </a>
                 <a class="navbar-item">
                   Contacto
                 </a>
-               
                 <a class="navbar-item">
                   Reportar Error
                 </a>
@@ -66,7 +63,6 @@
 
 <script>
 import { onAuthStateChanged, getAuth, signOut } from "firebase/auth";
-//import { ref, onMounted } from "vue";
 
 export default {
   data() {

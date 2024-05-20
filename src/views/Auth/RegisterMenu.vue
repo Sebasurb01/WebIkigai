@@ -6,13 +6,13 @@
         <hr>
         <form @submit.prevent="register">
           <div class="field">
-            <label class="label">Name</label>
+            <label class="label">Nombre</label>
             <div class="control">
               <input class="input" type="text" placeholder="sebastian urbano" v-model="name">
             </div>
           </div>
           <div class="field">
-            <label class="label">Email</label>
+            <label class="label">Correo electrónico</label>
             <div class="control">
               <input class="input" type="email" placeholder="sebasurb@gmail.com" v-model="email">
             </div>
@@ -34,7 +34,7 @@
 </template>
 
 <script>
-import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+import { getAuth, createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 
 export default {
   data() {
@@ -53,10 +53,20 @@ export default {
       if (this.name && this.email && this.password) {
         createUserWithEmailAndPassword(auth, this.email, this.password)
           .then(userCredential => {
-            console.log(userCredential.user);
-            this.name = '';
-            this.email = '';
-            this.password = '';
+            const user = userCredential.user;
+            if (user) {
+              updateProfile(user, {
+                displayName: this.name
+              }).then(() => {
+                this.name = '';
+                this.email = '';
+                this.password = '';
+                console.log(user);
+                this.$router.push('/dashboard');
+              }).catch(err => {
+                this.error = err.message;
+              });
+            }
           })
           .catch(err => {
             this.error = err.message;
