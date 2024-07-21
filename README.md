@@ -1,4 +1,4 @@
-# WebIkigai
+# Pagina Web Ikigai
 Proyecto Vue con Firebase para Gestión de Usuarios
 Este proyecto es una aplicación web desarrollada principalmente con Vue.js y Firebase, diseñada para gestionar usuarios con distintos roles.
 
