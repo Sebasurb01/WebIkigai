@@ -16,9 +16,3 @@ Operaciones CRUD: Creación, lectura, actualización y eliminación de usuarios 
 Tecnologías Utilizadas
 Vue.js: Framework principal para la creación de la interfaz de usuario.
 Firebase: Plataforma utilizada para la autenticación y base de datos.
-Instalación y Configuración
-Clona este repositorio: git clone https://github.com/tu-usuario/tu-repositorio.git
-Navega al directorio del proyecto: cd tu-repositorio
-Instala las dependencias: npm install
-Configura Firebase con tus credenciales.
-Ejecuta la aplicación: npm run servemi primer pagina desarrollado vue con base de datos en firebase 
